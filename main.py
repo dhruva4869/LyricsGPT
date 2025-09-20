@@ -1,4 +1,5 @@
-# Custom GPT
+# Custom Lyrics GPT created. 
+# TODO create own tiktokenizer implementation and use that instead of the current encoding decoding method.
 import torch
 import torch.nn as nn
 # this just makes it easier instead of creating a custom class / same method twice. No need to define a layer before using it, just use it as F.ReLu(embd)
