@@ -118,7 +118,7 @@ GPT/
 ├── block.py               # Transformer block implementation
 ├── feed_forward.py        # Feed-forward network implementation
 ├── datasets/
-│   └── lyrics.txt         # Training dataset (song lyrics)
+│   └── lyrics.txt         # Training dataset (song lyrics) - generated some songs and reused same over and over for testing
 ├── tiktokenizer/          # Placeholder for custom tokenizer
 └── README.md              # This file
 ```
