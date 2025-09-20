@@ -185,6 +185,7 @@ This project is open source and available under the [MIT License](LICENSE).
 ## 🙏 Acknowledgments
 
 - Inspired by the original GPT paper by Radford et al.
+- Attention is all you need, you have read this before as well 😁
 - Built using PyTorch framework
 - Dataset contains various song lyrics for training
 
