@@ -1,3 +1,4 @@
+# Custom GPT
 import torch
 import torch.nn as nn
 # this just makes it easier instead of creating a custom class / same method twice. No need to define a layer before using it, just use it as F.ReLu(embd)
