@@ -261,7 +261,7 @@ The model achieves reasonable performance for lyrics generation:
 ## 🔮 Future Improvements
 
 - [x] **Custom Tokenizer**: ✅ Implemented 4 different tokenizer approaches
-- [ ] **Tokenizer Integration**: Integrate advanced tokenizers into main model
+- [x] **Tokenizer Integration**: Integrate advanced tokenizers into main model
 - [ ] **Data Augmentation**: Techniques to increase dataset diversity
 - [ ] **Model Scaling**: Larger models with more parameters
 - [ ] **Fine-tuning**: Domain-specific fine-tuning capabilities
