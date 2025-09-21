@@ -9,9 +9,14 @@ A custom implementation of a Generative Pre-trained Transformer (GPT) model spec
 - **Custom GPT Architecture**: Built from scratch using PyTorch
 - **Lyrics Generation**: Trained specifically on song lyrics dataset
 - **Modular Design**: Clean separation of components (attention, feed-forward, blocks)
-- **Character-level Tokenization**: Simple character-based encoding/decoding
+- **Multiple Tokenizer Implementations**: 4 different tokenization approaches
+  - Advanced BPE tokenizer with OpenAI pattern support
+  - Educational BPE implementation for learning
+  - Official tiktoken library integration
+  - Basic character-level encoding
 - **Multi-GPU Support**: Automatic device detection (CUDA, MPS, CPU)
 - **Training Monitoring**: Built-in loss tracking and early stopping
+- **Tokenizer Visualization**: Tools for analyzing tokenization patterns
 
 ## 🏗️ Architecture
 
@@ -44,6 +49,84 @@ The model follows the standard GPT architecture with the following components:
    - Token and position embeddings
    - Stack of transformer blocks
    - Language modeling head
+
+## 🔤 Tokenizer Implementations
+
+This project includes **4 different tokenizer implementations** in the `tiktokenizer/` directory:
+
+### 1. **TikToken** (`tiktoken.py`)
+A comprehensive BPE (Byte Pair Encoding) tokenizer implementation that supports multiple OpenAI tokenizer patterns:
+
+- **Supported Patterns**:
+  - `GPT-2`: Original GPT-2 tokenizer pattern
+  - `r50k`: Refined 50k vocabulary pattern
+  - `cl100k_base`: GPT-4 tokenizer pattern (100k vocabulary)
+  - `o200k_base`: Extended 200k vocabulary pattern
+
+- **Features**:
+  - Random pattern selection for training diversity
+  - UTF-8 byte-level encoding with BPE merging
+  - Configurable vocabulary size
+  - Full encode/decode functionality
+  - Visualization tools for token analysis
+  - Round-trip testing capabilities
+
+- **Usage**:
+```python
+tokenizer = TikToken(text, vocab_size=500)
+tokenizer.train()
+tokens = tokenizer.encode("Hello world!")
+decoded = tokenizer.decode(tokens)
+```
+
+### 2. **NaiveBPE** (`naive_bpe.py`)
+A simplified BPE implementation for educational purposes:
+
+- **Features**:
+  - Basic byte pair encoding algorithm
+  - Character frequency analysis
+  - Simple merge operations
+  - Configurable pair count limits
+
+- **Implementation**:
+  - Inherits from `SimpleBitEncode` for basic functionality
+  - Preprocesses text to find most common character pairs
+  - Creates new tokens by merging frequent pairs
+  - Supports both encoding and decoding operations
+
+### 3. **ActualTikTokenizer** (`actual_tiktokenizer.py`)
+A wrapper around the official `tiktoken` library for comparison:
+
+- **Features**:
+  - Uses official OpenAI tiktoken library
+  - Supports `cl100k_base` encoding (GPT-4 tokenizer)
+  - Special token handling (`<|endoftext|>`)
+  - Token-by-token analysis and visualization
+
+- **Usage**:
+```python
+import tiktoken
+enc = tiktoken.get_encoding("cl100k_base")
+tokens = enc.encode(text, allowed_special={"<|endoftext|>"})
+```
+
+### 4. **SimpleBitEncode** (`naive_bpe.py`)
+A basic character-level encoder:
+
+- **Features**:
+  - Simple UTF-8 byte encoding
+  - Character-to-integer mapping
+  - Basic encode/decode functionality
+  - Foundation for more complex tokenizers
+
+## 🔧 Tokenizer Comparison
+
+| Tokenizer | Type | Vocabulary | Special Features | Use Case |
+|-----------|------|------------|------------------|----------|
+| **TikToken** | BPE | Configurable | Multi-pattern support, visualization | Production-ready |
+| **NaiveBPE** | BPE | Limited | Educational, simple implementation | Learning |
+| **ActualTikTokenizer** | Official | 100k+ | Official OpenAI compatibility | Benchmarking |
+| **SimpleBitEncode** | Character | 256 | Basic encoding | Foundation |
 
 ## 📊 Model Configuration
 
@@ -117,9 +200,13 @@ GPT/
 ├── multi_attention.py      # Multi-head attention implementation
 ├── block.py               # Transformer block implementation
 ├── feed_forward.py        # Feed-forward network implementation
+├── test_improved_bpe.py   # Testing script for BPE tokenizer
 ├── datasets/
 │   └── lyrics.txt         # Training dataset (song lyrics) - generated some songs and reused same over and over for testing
-├── tiktokenizer/          # Placeholder for custom tokenizer
+├── tiktokenizer/          # Custom tokenizer implementations
+│   ├── tiktoken.py        # TikToken - Comprehensive BPE tokenizer with multiple patterns
+│   ├── naive_bpe.py       # NaiveBPE - Simple BPE implementation for learning
+│   └── actual_tiktokenizer.py # ActualTikTokenizer - Official tiktoken wrapper
 └── README.md              # This file
 ```
 
@@ -136,10 +223,20 @@ GPT/
 - Modify `batch_size` based on available memory
 
 ### Tokenization
-The current implementation uses character-level tokenization. To improve:
-- Implement a custom tokenizer in the `tiktokenizer/` directory
-- Replace the simple character encoding with subword tokenization
-- This is marked as a TODO in the code
+The project includes multiple tokenization options:
+
+**Current Implementation**: Character-level tokenization in the main model
+
+**Available Tokenizers** (in `tiktokenizer/` directory):
+- **TikToken**: Production-ready BPE tokenizer with multiple OpenAI patterns
+- **NaiveBPE**: Educational BPE implementation for learning
+- **ActualTikTokenizer**: Official tiktoken library wrapper for benchmarking
+- **SimpleBitEncode**: Basic character-level encoder
+
+**Integration**: To use advanced tokenization:
+1. Import desired tokenizer from `tiktokenizer/`
+2. Replace character encoding in `main.py` with tokenizer.encode()
+3. Update vocabulary size and embedding dimensions accordingly
 
 ## 📈 Training Process
 
@@ -163,12 +260,14 @@ The model achieves reasonable performance for lyrics generation:
 
 ## 🔮 Future Improvements
 
-- [ ] **Custom Tokenizer**: Implement subword tokenization for better efficiency
+- [x] **Custom Tokenizer**: ✅ Implemented 4 different tokenizer approaches
+- [ ] **Tokenizer Integration**: Integrate advanced tokenizers into main model
 - [ ] **Data Augmentation**: Techniques to increase dataset diversity
 - [ ] **Model Scaling**: Larger models with more parameters
 - [ ] **Fine-tuning**: Domain-specific fine-tuning capabilities
 - [ ] **Evaluation Metrics**: BLEU, perplexity, and other NLP metrics
 - [ ] **Interactive Generation**: Real-time lyrics generation interface
+- [ ] **Tokenizer Benchmarking**: Compare performance across different tokenizers
 
 ## 🤝 Contributing
 

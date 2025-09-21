@@ -1,11 +1,32 @@
 import regex as re
+import random
 from collections import Counter
 
 class TikToken:
     def __init__(self, text, vocab_size):
         self.text = text
         self.vocab_size = vocab_size
-        self.pattern_match = r"""'s|'t|'re|'ve|'m|'ll|'d| ?[\p{L}]+| ?[\p{N}]+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
+        self.gpt_2 = r"""'s|'t|'re|'ve|'m|'ll|'d| ?[\p{L}]+| ?[\p{N}]+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
+        self.r50k_pat_str = (
+            r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}++| ?\p{N}++| ?[^\s\p{L}\p{N}]++|\s++$|\s+(?!\S)|\s"""
+        )
+        self.cl100k_base = (
+            r"""'(?i:[sdmt]|ll|ve|re)|[^\r\n\p{L}\p{N}]?+\p{L}++|\p{N}{1,3}+| ?[^\s\p{L}\p{N}]++[\r\n]*+|\s++$|\s*[\r\n]|\s+(?!\S)|\s"""
+        )
+        self.o200k_base = "|".join(
+            [
+                r"""[^\r\n\p{L}\p{N}]?[\p{Lu}\p{Lt}\p{Lm}\p{Lo}\p{M}]*[\p{Ll}\p{Lm}\p{Lo}\p{M}]+(?i:'s|'t|'re|'ve|'m|'ll|'d)?""",
+                r"""[^\r\n\p{L}\p{N}]?[\p{Lu}\p{Lt}\p{Lm}\p{Lo}\p{M}]+[\p{Ll}\p{Lm}\p{Lo}\p{M}]*(?i:'s|'t|'re|'ve|'m|'ll|'d)?""",
+                r"""\p{N}{1,3}""",
+                r""" ?[^\s\p{L}\p{N}]+[\r\n/]*""",
+                r"""\s*[\r\n]+""",
+                r"""\s+(?!\S)""",
+                r"""\s+""",
+            ]
+        )
+        self.choices = [self.gpt_2, self.r50k_pat_str, self.cl100k_base, self.o200k_base]
+        self.re_to_name = {self.gpt_2: "GPT-2", self.r50k_pat_str: "r50k", self.cl100k_base: "cl100k_base", self.o200k_base: "o200k_base"}
+        self.pattern_match = random.choice(self.choices)
         self.pattern = re.compile(self.pattern_match)
         self.ranks = {} # chr to ord
         self._decoder = {} # ord to chr
@@ -112,6 +133,9 @@ class TikToken:
         print(f"Token bytes: {[tb.decode('utf-8', errors='replace') for tb in token_bytes]}")
         print(f"Decoded: '{self.decode(tokens)}'")
         print("-" * 50)
+    
+    def call_tokenizer_used(self):
+        print(f"Pattern chosen for this one is : {self.re_to_name[self.pattern_match]}")
 
 
 def test_tokenizer():
@@ -148,6 +172,8 @@ def test_tokenizer():
         print(f"Match: {text == decoded}")
         assert text == decoded, "Text did not match"
         print()
+    
+    tokenizer.call_tokenizer_used()
 
 
 if __name__ == "__main__":
